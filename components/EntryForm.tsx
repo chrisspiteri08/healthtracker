@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function EntryForm({ onSuccess }: Props) {
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
   const [form, setForm] = useState({
     date: today,
     weight: "",
@@ -36,7 +36,7 @@ export default function EntryForm({ onSuccess }: Props) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
-      setForm({ date: today, weight: "", fatPercentage: "", waterPercentage: "" });
+      setForm({ date: new Date().toLocaleDateString("en-CA"), weight: "", fatPercentage: "", waterPercentage: "" });
       onSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
