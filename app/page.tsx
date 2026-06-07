@@ -50,7 +50,7 @@ export default function Home() {
         </div>
       )}
 
-      <EntriesTable entries={entries} loading={loading} />
+      <EntriesTable entries={entries} loading={loading} onDelete={fetchEntries} />
     </div>
   );
 }

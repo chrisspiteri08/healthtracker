@@ -1,13 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import { HealthEntry } from "@/lib/redis";
 
 interface Props {
   entries: HealthEntry[];
   loading: boolean;
+  onDelete: () => void;
 }
 
-export default function EntriesTable({ entries, loading }: Props) {
+export default function EntriesTable({ entries, loading, onDelete }: Props) {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeletingId(id);
+    try {
+      await fetch("/api/entries", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      onDelete();
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow p-6 text-center text-gray-500">
@@ -38,6 +56,7 @@ export default function EntriesTable({ entries, loading }: Props) {
               <th className="px-6 py-3 text-right">Weight (kg)</th>
               <th className="px-6 py-3 text-right">Fat %</th>
               <th className="px-6 py-3 text-right">Water %</th>
+              <th className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -54,6 +73,15 @@ export default function EntriesTable({ entries, loading }: Props) {
                 <td className="px-6 py-3 text-right text-gray-700">{entry.weight}</td>
                 <td className="px-6 py-3 text-right text-orange-600">{entry.fatPercentage}%</td>
                 <td className="px-6 py-3 text-right text-blue-600">{entry.waterPercentage}%</td>
+                <td className="px-6 py-3 text-right">
+                  <button
+                    onClick={() => handleDelete(entry.id)}
+                    disabled={deletingId === entry.id}
+                    className="text-red-400 hover:text-red-600 disabled:opacity-40 transition-colors text-xs font-medium"
+                  >
+                    {deletingId === entry.id ? "..." : "Delete"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
