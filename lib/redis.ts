@@ -1,9 +1,19 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+let redis: Redis;
+
+// Reuse connection in dev (hot reload), create fresh in prod
+if (process.env.NODE_ENV === "production") {
+  redis = new Redis(process.env.REDIS_URL!);
+} else {
+  const globalWithRedis = global as typeof global & { redis?: Redis };
+  if (!globalWithRedis.redis) {
+    globalWithRedis.redis = new Redis(process.env.REDIS_URL!);
+  }
+  redis = globalWithRedis.redis;
+}
+
+export { redis };
 
 export interface HealthEntry {
   id: string;
