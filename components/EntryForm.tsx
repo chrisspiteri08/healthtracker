@@ -38,7 +38,7 @@ export default function EntryForm({ onSuccess }: Props) {
       }
       setForm({ date: today, weight: "", fatPercentage: "", waterPercentage: "" });
       onSuccess();
-    } catch {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
