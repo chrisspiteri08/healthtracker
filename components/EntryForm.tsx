@@ -66,7 +66,7 @@ export default function EntryForm({ onSuccess }: Props) {
             required
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -82,7 +82,7 @@ export default function EntryForm({ onSuccess }: Props) {
             placeholder="e.g. 75.5"
             value={form.weight}
             onChange={(e) => setForm({ ...form, weight: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -99,7 +99,7 @@ export default function EntryForm({ onSuccess }: Props) {
             placeholder="e.g. 18.5"
             value={form.fatPercentage}
             onChange={(e) => setForm({ ...form, fatPercentage: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -116,7 +116,7 @@ export default function EntryForm({ onSuccess }: Props) {
             placeholder="e.g. 60.0"
             value={form.waterPercentage}
             onChange={(e) => setForm({ ...form, waterPercentage: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>

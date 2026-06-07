@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import EntryForm from "@/components/EntryForm";
 import EntriesTable from "@/components/EntriesTable";
+import MetricsChart from "@/components/MetricsChart";
 import { HealthEntry } from "@/lib/redis";
 
 export default function Home() {
@@ -50,6 +51,7 @@ export default function Home() {
         </div>
       )}
 
+      <MetricsChart entries={entries} />
       <EntriesTable entries={entries} loading={loading} onDelete={fetchEntries} />
     </div>
   );
