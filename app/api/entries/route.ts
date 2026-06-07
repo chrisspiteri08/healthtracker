@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRedis, HealthEntry } from "@/lib/redis";
+import { redis, HealthEntry } from "@/lib/redis";
 
 export async function GET() {
   try {
-    const redis = getRedis();
     const keys = await redis.keys("entry:*");
     if (keys.length === 0) return NextResponse.json([]);
-    const entries = await Promise.all(keys.map((key) => redis.get<HealthEntry>(key)));
-    const sorted = (entries.filter(Boolean) as HealthEntry[]).sort(
+    const raw = await Promise.all(keys.map((key) => redis.get(key)));
+    const entries = raw
+      .filter(Boolean)
+      .map((v) => JSON.parse(v as string) as HealthEntry);
+    const sorted = entries.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     return NextResponse.json(sorted);
@@ -19,7 +21,6 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const redis = getRedis();
     const body = await req.json();
     const { date, weight, fatPercentage, waterPercentage } = body;
 
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    await redis.set(`entry:${id}`, entry);
+    await redis.set(`entry:${id}`, JSON.stringify(entry));
     return NextResponse.json(entry, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

@@ -1,33 +1,26 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
-let _redis: Redis | null = null;
-
-export function getRedis(): Redis {
-  if (_redis) return _redis;
-
-  const restUrl = process.env.UPSTASH_REDIS_REST_URL;
-  const restToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  if (restUrl && restToken) {
-    _redis = new Redis({ url: restUrl, token: restToken });
-    return _redis;
-  }
-
-  const redisUrl = process.env.REDIS_URL;
-  if (!redisUrl) {
-    throw new Error(
-      "Redis not configured. Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN or REDIS_URL."
-    );
-  }
-
-  // REDIS_URL format: rediss://default:<token>@<hostname>:<port>
-  const parsed = new URL(redisUrl);
-  _redis = new Redis({
-    url: `https://${parsed.hostname}`,
-    token: parsed.password,
-  });
-  return _redis;
+declare global {
+  // eslint-disable-next-line no-var
+  var _redis: Redis | undefined;
 }
+
+function createClient(): Redis {
+  const url = process.env.REDIS_URL;
+  if (!url) throw new Error("REDIS_URL is not set");
+
+  return new Redis(url, {
+    maxRetriesPerRequest: 3,
+    enableReadyCheck: false,
+    lazyConnect: false,
+  });
+}
+
+// Reuse connection across hot reloads in dev; create fresh in prod per instance
+export const redis: Redis =
+  process.env.NODE_ENV === "production"
+    ? createClient()
+    : (global._redis ?? (global._redis = createClient()));
 
 export interface HealthEntry {
   id: string;
