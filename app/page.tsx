@@ -14,9 +14,9 @@ export default function Home() {
     try {
       const res = await fetch("/api/entries");
       const data = await res.json();
-      setEntries(data);
-    } catch {
-      console.error("Failed to fetch entries");
+      setEntries(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch entries", err);
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { redis, HealthEntry } from "@/lib/redis";
+import { getRedis, HealthEntry } from "@/lib/redis";
 
 export async function GET() {
   try {
+    const redis = getRedis();
     const keys = await redis.keys("entry:*");
     if (keys.length === 0) return NextResponse.json([]);
     const entries = await Promise.all(keys.map((key) => redis.get<HealthEntry>(key)));
@@ -18,6 +19,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const redis = getRedis();
     const body = await req.json();
     const { date, weight, fatPercentage, waterPercentage } = body;
 
