@@ -6,11 +6,10 @@ export async function GET() {
   if (keys.length === 0) {
     return NextResponse.json([]);
   }
-  const raw = await Promise.all(keys.map((key) => redis.get(key)));
-  const entries = raw
-    .filter(Boolean)
-    .map((v) => JSON.parse(v as string) as HealthEntry);
-  const sorted = entries.sort(
+  const entries = await Promise.all(
+    keys.map((key) => redis.get<HealthEntry>(key))
+  );
+  const sorted = (entries.filter(Boolean) as HealthEntry[]).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
   return NextResponse.json(sorted);
@@ -34,6 +33,6 @@ export async function POST(req: NextRequest) {
     createdAt: new Date().toISOString(),
   };
 
-  await redis.set(`entry:${id}`, JSON.stringify(entry));
+  await redis.set(`entry:${id}`, entry);
   return NextResponse.json(entry, { status: 201 });
 }
