@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function MetricsChart({ entries }: Props) {
-  if (entries.length < 2) return null;
+  if (entries.length === 0) return null;
 
   const data = [...entries]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
