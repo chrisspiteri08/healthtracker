@@ -32,11 +32,14 @@ export default function EntryForm({ onSuccess }: Props) {
           waterPercentage: parseFloat(form.waterPercentage),
         }),
       });
-      if (!res.ok) throw new Error("Failed to save entry");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
       setForm({ date: today, weight: "", fatPercentage: "", waterPercentage: "" });
       onSuccess();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
